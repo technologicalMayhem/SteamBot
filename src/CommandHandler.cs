@@ -25,12 +25,12 @@ namespace technologicalMayhem.SteamBot
             thread = new Thread(() => Run());
             Commands = new List<CommandInfo>();
             //Load all availible Commands
-            foreach (var c in AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(x => x.GetInterfaces().Contains(typeof(IChatCommand)) && x.IsClass))
+            foreach (var c in AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(x => x.GetInterfaces().Contains(typeof(IChatCommand)) && !x.GetInterfaces().Contains(typeof(ISubCommand)) && x.IsClass && !x.IsAbstract))
             {
                 var cmnd = (IChatCommand)Activator.CreateInstance(c);
-                var acti = new string[]{cmnd.Properties.Command};
+                var acti = new string[] { cmnd.Properties.Command };
                 acti.Concat(cmnd.Properties.CommandAlias);
-                Commands.Add(new CommandInfo(){type = c, activators = acti });
+                Commands.Add(new CommandInfo() { type = c, activators = acti });
             }
             var table = new ConsoleTables.ConsoleTable("Source", "Class Name", "Command");
             Commands.ForEach(x => table.AddRow(Path.GetFileName(x.GetType().Assembly.Location), x.GetType().Name, String.Join(',', x.activators)));
@@ -72,12 +72,6 @@ namespace technologicalMayhem.SteamBot
             tasks.Enqueue(new Task(id, message.Split(' ')));
         }
 
-        public struct CommandInfo
-        {
-            public string[] activators;
-            public Type type;
-        }
-
         private class Task
         {
             public Task(SteamID steamID, string[] parameters)
@@ -90,10 +84,13 @@ namespace technologicalMayhem.SteamBot
             public string[] parameters { get; set; }
         }
     }
-}
 
-namespace technologicalMayhem.SteamBot
-{
+    public struct CommandInfo
+    {
+        public string[] activators;
+        public Type type;
+    }
+
     public class ChatCommandProperties
     {
         public bool ShowInHelp = true;

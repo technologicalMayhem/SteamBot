@@ -9,8 +9,8 @@ namespace technologicalMayhem.SteamBot
         void Execute(SteamID steamid, string[] parameters);
     }
 
-    public interface IPlugin{
-        void Initialize();
-        void Shutdown();
+    public interface ISubCommand
+    {
+        
     }
 }

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace technologicalMayhem.SteamBot
 {
-    public class gmCommand : commandGroupBase
+    public class gmCommand : CommandGroupBase
     {
         public gmCommand()
         {
@@ -19,14 +19,12 @@ namespace technologicalMayhem.SteamBot
             subCommands.Add("addons", typeof(Addons));
         }
 
-        public class Addons : commandGroupBase
+        public class Addons : CommandGroupBase
         {
             public Addons()
             {
                 Properties = new ChatCommandProperties()
                 {
-                    ShowInHelp = false,
-                    Command = "addons",
                     CommandSyntax = "gmod addons <subcommand> [parameter]",
                     CommandDescription = "Stellt Befehle zu managen der Addons auf dem GMod Server bereit"
                 };
@@ -37,8 +35,6 @@ namespace technologicalMayhem.SteamBot
             {
                 public ChatCommandProperties Properties { get; } = new ChatCommandProperties()
                 {
-                    ShowInHelp = false,
-                    Command = "alert",
                     CommandSyntax = "gmod addons alert [on|off]",
                     CommandDescription = "Zeigt den aktuellen Status des Addon Alarms oder legt ihn fest."
                 };

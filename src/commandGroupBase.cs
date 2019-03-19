@@ -5,7 +5,7 @@ using SteamKit2;
 
 namespace technologicalMayhem.SteamBot
 {
-    public abstract class commandGroupBase : IChatCommand
+    public abstract class CommandGroupBase : IChatCommand
     {
         public virtual ChatCommandProperties Properties { get; set; }
         public Dictionary<string, Type> subCommands = new Dictionary<string, Type>();
@@ -16,7 +16,7 @@ namespace technologicalMayhem.SteamBot
             {
                 if (parameters.Length < 1)
                 {
-                    noParameters();
+                    NoParameters();
                 }
                 else
                 {
@@ -27,7 +27,7 @@ namespace technologicalMayhem.SteamBot
                     }
                     catch (KeyNotFoundException)
                     {
-                        notFound();
+                        NotFound();
                     }
                 }
             }
@@ -39,14 +39,14 @@ namespace technologicalMayhem.SteamBot
             }
         }
 
-        public virtual void notFound()
+        public virtual void NotFound()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"Warning: {this.GetType()} has not implemented a notFound method.");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public virtual void noParameters()
+        public virtual void NoParameters()
         {
         }
     }

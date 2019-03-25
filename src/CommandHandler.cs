@@ -12,8 +12,12 @@ namespace technologicalMayhem.SteamBot
 {
     public static class CommandHandler
     {
-        private static Queue<Task> tasks;
+        public static event CommandReceivedHandler CommandReceived = delegate { };
+        public delegate void CommandReceivedHandler(OnCommandReceivedEventArgs e);
+        public static event EventHandler<OnCommandExecutedEventArgs> CommandExecuted = delegate { };
+
         public static List<CommandInfo> Commands;
+        private static Queue<Task> tasks;
         private static List<IChatCommand> ExecutingTasks;
         private static bool isShuttingDown;
         private static Thread thread;
@@ -25,7 +29,9 @@ namespace technologicalMayhem.SteamBot
             thread = new Thread(() => Run());
             Commands = new List<CommandInfo>();
             //Load all availible Commands
-            foreach (var c in AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(x => x.GetInterfaces().Contains(typeof(IChatCommand)) && !x.GetInterfaces().Contains(typeof(ISubCommand)) && x.IsClass && !x.IsAbstract))
+            foreach (var c in AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(x => x.GetTypes())
+                .Where(x => x.GetInterfaces().Contains(typeof(IChatCommand)) && !x.GetInterfaces().Contains(typeof(ISubCommand)) && x.IsClass && !x.IsAbstract))
             {
                 var cmnd = (IChatCommand)Activator.CreateInstance(c);
                 var acti = new string[] { cmnd.Properties.Command };
@@ -51,6 +57,12 @@ namespace technologicalMayhem.SteamBot
                     try
                     {
                         command = (IChatCommand)Activator.CreateInstance(type);
+                        CommandReceived(new OnCommandReceivedEventArgs()
+                        {
+                            steamID = task.steamID,
+                            parameters = task.parameters,
+                            command = command
+                        });
                     }
                     catch (System.ArgumentNullException)
                     {
@@ -58,6 +70,12 @@ namespace technologicalMayhem.SteamBot
                     }
                     ExecutingTasks.Add(command);
                     command.Execute(task.steamID, task.parameters.Skip(1).ToArray());
+                    OnCommandExecuted(new OnCommandExecutedEventArgs()
+                    {
+                        steamID = task.steamID,
+                        parameters = task.parameters,
+                        command = command
+                    });
                 }
             }
         }
@@ -82,6 +100,29 @@ namespace technologicalMayhem.SteamBot
 
             public SteamID steamID { get; }
             public string[] parameters { get; set; }
+        }
+
+        static void OnCommandExecuted(OnCommandExecutedEventArgs e)
+        {
+            EventHandler<OnCommandExecutedEventArgs> handler = CommandExecuted;
+            if (handler != null)
+            {
+                handler(null, e);
+            }
+        }
+
+        public class OnCommandReceivedEventArgs : EventArgs
+        {
+            public SteamID steamID;
+            public string[] parameters;
+            public IChatCommand command;
+        }
+
+        public class OnCommandExecutedEventArgs : EventArgs
+        {
+            public SteamID steamID;
+            public string[] parameters;
+            public IChatCommand command;
         }
     }
 

@@ -16,6 +16,7 @@ namespace technologicalMayhem.SteamBot
         {
             Configuration.LoadConfig();
             CommandHandler.Start();
+            AddonManager.InitializeAddons();
             TaskManager.Start();
             ChatManager.Start();
             ConsoleManager.Start();

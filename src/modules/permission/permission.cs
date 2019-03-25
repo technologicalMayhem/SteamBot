@@ -7,15 +7,15 @@ namespace technologicalMayhem.SteamBot
     public static class Permissions
     {
         [PluginInitializer]
-        static void Initialize()
+        public static void Initialize()
         {
             CommandHandler.CommandReceived += CheckPermissions;
         }
 
-        public static void CheckPermissions(CommandHandler.OnCommandReceivedEventArgs e)
+        public static void CheckPermissions(ref CommandHandler.OnCommandReceivedEventArgs e)
         {
-            Console.WriteLine($"The command being executed is: {e.command.GetType()}. Replacing it now!");
-            e.command = new InsufficientPermissions();
+            //TODO: Implement Stuff
+            throw new NotImplementedException();
         }
 
 

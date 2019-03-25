@@ -13,7 +13,7 @@ namespace technologicalMayhem.SteamBot
     public static class CommandHandler
     {
         public static event CommandReceivedHandler CommandReceived = delegate { };
-        public delegate void CommandReceivedHandler(OnCommandReceivedEventArgs e);
+        public delegate void CommandReceivedHandler(ref OnCommandReceivedEventArgs e);
         public static event EventHandler<OnCommandExecutedEventArgs> CommandExecuted = delegate { };
 
         public static List<CommandInfo> Commands;
@@ -59,17 +59,23 @@ namespace technologicalMayhem.SteamBot
                     try
                     {
                         command = (IChatCommand)Activator.CreateInstance(type);
-                        CommandReceived(new OnCommandReceivedEventArgs()
-                        {
-                            steamID = task.steamID,
-                            parameters = task.parameters,
-                            command = command
-                        });
                     }
                     catch (System.ArgumentNullException)
                     {
                         command = (IChatCommand)Activator.CreateInstance(typeof(CommandNotFound));
                     }
+                    //Do the event to let other parts of program change stuff about the command
+                    var eventArgs = new OnCommandReceivedEventArgs()
+                    {
+                        steamID = task.steamID,
+                        parameters = task.parameters,
+                        command = command
+                    };
+                    CommandReceived(ref eventArgs);
+                    command = eventArgs.command;
+                    task.parameters = eventArgs.parameters;
+
+                    Console.WriteLine($"Executing {command}");
                     ExecutingTasks.Add(command);
                     command.Execute(task.steamID, task.parameters.Skip(1).ToArray());
                     OnCommandExecuted(new OnCommandExecutedEventArgs()

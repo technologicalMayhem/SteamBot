@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using SteamKit2;
+using Newtonsoft.Json;
 using technologicalMayhem.SteamBot;
 
 namespace technologicalMayhem.SteamBot
@@ -14,11 +16,29 @@ namespace technologicalMayhem.SteamBot
 
         public static void CheckPermissions(ref CommandHandler.OnCommandReceivedEventArgs e)
         {
-            //TODO: Implement Stuff
-            throw new NotImplementedException();
+            var userData = UserManager.GetUserData(e.steamID);
+            UserPermissions permissions;
+            try
+            {
+                permissions = JsonConvert.DeserializeObject<UserPermissions>(userData["permissions"]);
+            }
+            catch (KeyNotFoundException)
+            {
+                permissions = new UserPermissions();
+            }
         }
 
+        class UserPermissions
+        {
+            public int rank;
+            public List<string> permissions;
 
+            public UserPermissions()
+            {
+                rank = 0;
+                permissions = new List<string>();
+            }
+        }
     }
 
     public class InsufficientPermissions : IChatCommand

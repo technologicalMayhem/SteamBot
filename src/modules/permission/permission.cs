@@ -8,6 +8,8 @@ namespace technologicalMayhem.SteamBot
 {
     public static class Permissions
     {
+        static List<Rank> ranks;
+
         [PluginInitializer]
         public static void Initialize()
         {
@@ -26,18 +28,28 @@ namespace technologicalMayhem.SteamBot
             {
                 permissions = new UserPermissions();
             }
+            if (!permissions.Permissions.Contains(e.command.GetType().ToString()))
+            {
+                e.command = new InsufficientPermissions();
+            }
         }
 
         class UserPermissions
         {
-            public int rank;
-            public List<string> permissions;
+            public int Rank {get; set;}
+            public List<string> Permissions {get; set;}
 
             public UserPermissions()
             {
-                rank = 0;
-                permissions = new List<string>();
+                Rank = 0;
+                Permissions = new List<string>();
             }
+        }
+
+        class Rank
+        {
+            public int RankID {get; set;}
+            public List<string> Permissions {get; set;}
         }
     }
 

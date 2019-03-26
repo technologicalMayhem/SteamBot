@@ -23,7 +23,7 @@ namespace technologicalMayhem.SteamBot
                     try
                     {
                         var command = (IChatCommand)Activator.CreateInstance(subCommands[parameters[0]]);
-                        command.Execute(steamid, parameters.Skip(1).ToArray());
+                        CommandHandler.AddPreparedTask(steamid, parameters.Skip(1).ToArray(), command);
                     }
                     catch (KeyNotFoundException)
                     {

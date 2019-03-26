@@ -54,36 +54,11 @@ namespace technologicalMayhem.SteamBot
                 if (tasks.Count > 0)
                 {
                     var task = tasks.Dequeue();
-                    var type = Commands.FirstOrDefault(x => x.activators.Contains(task.parameters[0])).type;
-                    IChatCommand command;
-                    try
+                    if (task.command == null)
                     {
-                        command = (IChatCommand)Activator.CreateInstance(type);
+                        task = FindCommand(task);
                     }
-                    catch (System.ArgumentNullException)
-                    {
-                        command = (IChatCommand)Activator.CreateInstance(typeof(CommandNotFound));
-                    }
-                    //Do the event to let other parts of program change stuff about the command
-                    var eventArgs = new OnCommandReceivedEventArgs()
-                    {
-                        steamID = task.steamID,
-                        parameters = task.parameters,
-                        command = command
-                    };
-                    CommandReceived(ref eventArgs);
-                    command = eventArgs.command;
-                    task.parameters = eventArgs.parameters;
-
-                    Console.WriteLine($"Executing {command}");
-                    ExecutingTasks.Add(command);
-                    command.Execute(task.steamID, task.parameters.Skip(1).ToArray());
-                    OnCommandExecuted(new OnCommandExecutedEventArgs()
-                    {
-                        steamID = task.steamID,
-                        parameters = task.parameters,
-                        command = command
-                    });
+                    ExecuteTask(task);
                 }
             }
         }
@@ -93,9 +68,52 @@ namespace technologicalMayhem.SteamBot
 
         }
 
+        static Task FindCommand(Task task)
+        {
+            var type = Commands.FirstOrDefault(x => x.activators.Contains(task.parameters[0])).type;
+            try
+            {
+                task.command = (IChatCommand)Activator.CreateInstance(type);
+            }
+            catch (System.ArgumentNullException)
+            {
+                task.command = (IChatCommand)Activator.CreateInstance(typeof(CommandNotFound));
+            }
+            task.parameters = task.parameters.Skip(1).ToArray();
+            return task;
+        }
+
+        static void ExecuteTask(Task task)
+        {
+            //Do the event to let other parts of program change stuff about the command
+            var eventArgs = new OnCommandReceivedEventArgs()
+            {
+                steamID = task.steamID,
+                parameters = task.parameters,
+                command = task.command
+            };
+            CommandReceived(ref eventArgs);
+            task.command = eventArgs.command;
+            task.parameters = eventArgs.parameters;
+
+            ExecutingTasks.Add(task.command);
+            task.command.Execute(task.steamID, task.parameters);
+            OnCommandExecuted(new OnCommandExecutedEventArgs()
+            {
+                steamID = task.steamID,
+                parameters = task.parameters,
+                command = task.command
+            });
+        }
+
         public static void AddTask(SteamID id, string message)
         {
             tasks.Enqueue(new Task(id, message.Split(' ')));
+        }
+
+        public static void AddPreparedTask(SteamID steamID, string[] parameters, IChatCommand command)
+        {
+            tasks.Enqueue(new Task(steamID, parameters, command));
         }
 
         private class Task
@@ -106,8 +124,16 @@ namespace technologicalMayhem.SteamBot
                 this.parameters = parameters;
             }
 
-            public SteamID steamID { get; }
-            public string[] parameters { get; set; }
+            public Task(SteamID steamID, string[] parameters, IChatCommand command)
+            {
+                this.steamID = steamID;
+                this.parameters = parameters;
+                this.command = command;
+            }
+
+            public SteamID steamID;
+            public string[] parameters;
+            public IChatCommand command;
         }
 
         static void OnCommandExecuted(OnCommandExecutedEventArgs e)

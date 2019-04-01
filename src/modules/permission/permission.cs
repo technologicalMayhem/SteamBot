@@ -10,7 +10,7 @@ namespace technologicalMayhem.SteamBot
     {
         static List<Rank> ranks;
 
-        [PluginInitializer]
+        [AddonInitializer]
         public static void Initialize()
         {
             CommandHandler.CommandReceived += CheckPermissions;

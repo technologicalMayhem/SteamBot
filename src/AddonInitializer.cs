@@ -3,16 +3,16 @@ using System;
 namespace technologicalMayhem.SteamBot
 {
     [System.AttributeUsage(System.AttributeTargets.Method)]
-    sealed class PluginInitializer : System.Attribute
+    sealed class AddonInitializer : System.Attribute
     {
         readonly int priority;
 
-        public PluginInitializer()
+        public AddonInitializer()
         {
             priority = 0;
         }
 
-        public PluginInitializer(int priority)
+        public AddonInitializer(int priority)
         {
             this.priority = priority;
         }

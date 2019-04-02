@@ -12,10 +12,18 @@ namespace technologicalMayhem.SteamBot
 {
     class Program
     {
-        static void Main( string[] args )
+        static void Main(string[] args)
         {
-            Configuration.LoadConfig();
-            UserManager.Start();
+            try
+            {
+                Configuration.LoadConfig();
+                UserManager.Start();
+            }
+            catch (ConfigurationException)
+            {
+                Console.WriteLine("Unable to configure application. Shutting down...");
+                Environment.Exit(78);
+            }
             CommandHandler.Start();
             AddonManager.InitializeAddons();
             TaskManager.Start();

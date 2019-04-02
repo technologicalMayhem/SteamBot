@@ -24,43 +24,52 @@ namespace technologicalMayhem.SteamBot
                 {
                     if (ex is JsonException)
                     {
-                        Console.WriteLine("Something is wrong with the user.json file. Delete it? (y/n):  n");
+                        Console.WriteLine("Something is wrong with the user.json file. Recreate it? (y/n):  n");
                         bool delete = false;
-                        while (true)
+                        bool loop = true;
+                        while (loop)
                         {
                             var key = Console.ReadKey();
                             Console.CursorLeft -= 1;
                             switch (key.Key)
                             {
-                                case(ConsoleKey.Y):
-                                delete = true;
-                                Console.Write("y");
-                                break;
+                                case (ConsoleKey.Y):
+                                    delete = true;
+                                    Console.Write("y");
+                                    break;
 
-                                case(ConsoleKey.N):
-                                delete = false;
-                                Console.Write("n");
-                                break;
+                                case (ConsoleKey.N):
+                                    delete = false;
+                                    Console.Write("n");
+                                    break;
 
-                                case(ConsoleKey.Enter):
-                                //TODO: Recreate File;
-                                throw new NotImplementedException();
-                                
+                                case (ConsoleKey.Enter):
+                                    if (delete)
+                                    {
+                                        users = new List<User>();
+                                        File.WriteAllText("users.json", JsonConvert.SerializeObject(users));
+                                    }
+                                    else
+                                    {
+                                        throw new ConfigurationException();
+                                    }
+                                    loop = false;
+                                    break;
+
                                 default:
-                                Console.CursorLeft += 1;
-                                break;
+                                    Console.CursorLeft += 1;
+                                    break;
                             }
-                            
+
                         }
                     }
-                    users = new List<User>();
                 }
             }
         }
 
         public static void Stop()
         {
-            File.WriteAllText("users.json", JsonConvert.SerializeObject(users));
+            
         }
 
         public static Dictionary<string, string> GetUserData(SteamID steamID)
@@ -75,13 +84,13 @@ namespace technologicalMayhem.SteamBot
                 users.Add(newuser);
                 return newuser.data;
             }
-        } 
+        }
     }
 
     public class User
     {
-        public SteamID steamID {get;}
-        public Dictionary<string, string> data {get;set;}
+        public SteamID steamID { get; }
+        public Dictionary<string, string> data { get; set; }
 
         public User(SteamID steamID)
         {

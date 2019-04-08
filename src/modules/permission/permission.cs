@@ -16,7 +16,7 @@ namespace technologicalMayhem.SteamBot
             CommandHandler.CommandReceived += CheckPermissions;
         }
 
-        public static void CheckPermissions(ref CommandHandler.OnCommandReceivedEventArgs e)
+        static void CheckPermissions(ref CommandHandler.OnCommandReceivedEventArgs e)
         {
             var userData = UserManager.GetUserData(e.steamID);
             UserPermissions permissions;
@@ -34,22 +34,48 @@ namespace technologicalMayhem.SteamBot
             }
         }
 
-        class UserPermissions
+        public static UserPermissions GetUserPermissions(SteamID steamid)
         {
-            public int Rank {get; set;}
-            public List<string> Permissions {get; set;}
-
-            public UserPermissions()
-            {
-                Rank = 0;
-                Permissions = new List<string>();
-            }
+            return JsonConvert.DeserializeObject<UserPermissions>(UserManager.GetUserData(steamid)["permission"]);
         }
 
-        class Rank
+        public static void SetUserPermissions(UserPermissions permissions, SteamID steamid)
         {
-            public int RankID {get; set;}
-            public List<string> Permissions {get; set;}
+            UserManager.GetUserData(steamid)["permission"] = JsonConvert.SerializeObject(permissions);
+        }
+
+        public static string[] GetAllPermissions()
+        {
+            var commands = new List<string>();
+            foreach (var c in CommandHandler.Commands)
+            {
+                commands.Add(c.type.FullName);
+            }
+            return commands.ToArray();
+        }
+
+    }
+
+    public class Rank
+    {
+        public int RankID { get; set; }
+        public List<string> Permissions { get; set; }
+    }
+
+    public class UserPermissions
+    {
+        public int Rank { get; set; }
+        public List<string> Permissions { get; set; }
+
+        public UserPermissions()
+        {
+            Rank = 0;
+            Permissions = new List<string>();
+        }
+
+        public string SaveChanges()
+        {
+            return JsonConvert.SerializeObject(this);
         }
     }
 

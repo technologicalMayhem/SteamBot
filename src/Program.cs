@@ -25,7 +25,7 @@ namespace technologicalMayhem.SteamBot
                 Environment.Exit(78);
             }
             CommandHandler.Start();
-            AddonManager.InitializeAddons();
+            //AddonManager.InitializeAddons();
             TaskManager.Start();
             ChatManager.Start();
             ConsoleManager.Start();

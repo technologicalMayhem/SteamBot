@@ -36,7 +36,15 @@ namespace technologicalMayhem.SteamBot
 
         public static UserPermissions GetUserPermissions(SteamID steamid)
         {
-            return JsonConvert.DeserializeObject<UserPermissions>(UserManager.GetUserData(steamid)["permission"]);
+            var userData = UserManager.GetUserData(steamid);
+            if (userData.ContainsKey("permission"))
+            {
+                return JsonConvert.DeserializeObject<UserPermissions>(userData["permission"]);
+            }
+            else
+            {
+                return new UserPermissions();
+            }
         }
 
         public static void SetUserPermissions(UserPermissions permissions, SteamID steamid)

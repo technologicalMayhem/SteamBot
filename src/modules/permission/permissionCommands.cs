@@ -34,8 +34,8 @@ namespace technologicalMayhem.SteamBot
 
             public void Execute(SteamID steamid, string[] parameters)
             {
-                var userData = UserManager.GetUserData(new SteamID(parameters[0]));
-                var permissions = JsonConvert.DeserializeObject<UserPermissions>(userData["permissions"]);
+                var userSteamID = new SteamID(parameters[0]);
+                var permissions = Permissions.GetUserPermissions(userSteamID);
                 if (permissions.Permissions.Count >= 1)
                 {
                     var url = PastebinAPI.Paste.CreateAsync(String.Join("\n", permissions.Permissions), "Permissions for " + parameters[0]).Result.Url;

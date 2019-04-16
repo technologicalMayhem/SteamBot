@@ -17,6 +17,9 @@ namespace technologicalMayhem.SteamBot
                 CommandAlias = new string[] { "perm" },
                 CommandSyntax = "permissions <subcommand> [parameter]",
             };
+            subCommands.Add("get", typeof(GetPermissions));
+            subCommands.Add("add", typeof(AddPermissions));
+            subCommands.Add("remove", typeof(RemovePermissions));
         }
 
         public class GetPermissions : IChatCommand
@@ -34,16 +37,30 @@ namespace technologicalMayhem.SteamBot
 
             public void Execute(SteamID steamid, string[] parameters)
             {
-                var userSteamID = new SteamID(parameters[0]);
-                var permissions = Permissions.GetUserPermissions(userSteamID);
-                if (permissions.Permissions.Count >= 1)
+                if (parameters.Length > 0 && parameters[0] != null)
                 {
-                    var url = PastebinAPI.Paste.CreateAsync(String.Join("\n", permissions.Permissions), "Permissions for " + parameters[0]).Result.Url;
-                    ChatManager.AddTask(steamid, url);
+                    var userSteamID = new SteamID(parameters[0]);
+                    if (userSteamID.IsValid)
+                    {
+                        var permissions = Permissions.GetUserPermissions(userSteamID);
+                        if (permissions.Permissions.Count >= 1)
+                        {
+                            var url = PastebinAPI.Paste.CreateAsync(String.Join("\n", permissions.Permissions), "Permissions for " + parameters[0]).Result.Url;
+                            ChatManager.AddTask(steamid, url);
+                        }
+                        else
+                        {
+                            ChatManager.AddTask(steamid, $"{steamid} has no permissions to return.");
+                        }
+                    }
+                    else
+                    {
+                        ChatManager.AddTask(steamid, $"{parameters[0]} is not a valid Steam ID.");
+                    }
                 }
                 else
                 {
-                    ChatManager.AddTask(steamid, $"{steamid} has no permissions to return.");
+                    ChatManager.AddTask(steamid, "Syntax Error. Usage: permissions get <steamid>");
                 }
             }
         }
@@ -63,19 +80,34 @@ namespace technologicalMayhem.SteamBot
 
             public void Execute(SteamID steamid, string[] parameters)
             {
-                var user = new SteamID(parameters[0]);
-                var permissions = Permissions.GetUserPermissions(steamid);
-                var pattern = new WildcardPattern(parameters[1]);
-                var newPermissions = Permissions.GetAllPermissions().ToList();
-                //Filter the permission list
-                var filtered = newPermissions.FindAll(x => pattern.IsMatch(x));
-                //Add new permissions to the list
-                foreach (var item in filtered)
+                if (parameters.Length > 0 && parameters[0] != null)
                 {
-                    if (!permissions.Permissions.Contains(item))
+                    var user = new SteamID(parameters[0]);
+                    if (user.IsValid)
                     {
-                        permissions.Permissions.Add(item);
+                        var permissions = Permissions.GetUserPermissions(steamid);
+                        var pattern = new WildcardPattern(parameters[1]);
+                        var newPermissions = Permissions.GetAllPermissions().ToList();
+                        //Filter the permission list
+                        var filtered = newPermissions.FindAll(x => pattern.IsMatch(x));
+                        //Add new permissions to the list
+                        foreach (var item in filtered)
+                        {
+                            if (!permissions.Permissions.Contains(item))
+                            {
+                                Console.WriteLine(item);
+                                permissions.Permissions.Add(item);
+                            }
+                        }
                     }
+                    else
+                    {
+                        ChatManager.AddTask(steamid, $"{parameters[0]} is not a valid Steam ID.");
+                    }
+                }
+                else
+                {
+                    ChatManager.AddTask(steamid, "Syntax Error. Usage: permissions add <steamid> <permission>");
                 }
             }
         }
@@ -96,19 +128,33 @@ namespace technologicalMayhem.SteamBot
 
             public void Execute(SteamID steamid, string[] parameters)
             {
-                var user = new SteamID(parameters[0]);
-                var permissions = Permissions.GetUserPermissions(steamid);
-                var pattern = new WildcardPattern(parameters[1]);
-                var newPermissions = Permissions.GetAllPermissions().ToList();
-                //Filter the permission list
-                var filtered = newPermissions.FindAll(x => pattern.IsMatch(x));
-                //Add new permissions to the list
-                foreach (var item in filtered)
+                if (parameters.Length > 0 && parameters[0] != null)
                 {
-                    if (permissions.Permissions.Contains(item))
+                    var user = new SteamID(parameters[0]);
+                    if (user.IsValid)
                     {
-                        permissions.Permissions.Remove(item);
+                        var permissions = Permissions.GetUserPermissions(steamid);
+                        var pattern = new WildcardPattern(parameters[1]);
+                        var newPermissions = Permissions.GetAllPermissions().ToList();
+                        //Filter the permission list
+                        var filtered = newPermissions.FindAll(x => pattern.IsMatch(x));
+                        //Add new permissions to the list
+                        foreach (var item in filtered)
+                        {
+                            if (permissions.Permissions.Contains(item))
+                            {
+                                permissions.Permissions.Remove(item);
+                            }
+                        }
                     }
+                    else
+                    {
+                        ChatManager.AddTask(steamid, $"{parameters[0]} is not a valid Steam ID.");
+                    }
+                }
+                else
+                {
+                    ChatManager.AddTask(steamid, "Syntax Error. Usage: permissions remove <steamid> <permission>");
                 }
             }
         }

@@ -2,8 +2,8 @@ using System;
 
 namespace technologicalMayhem.SteamBot
 {
-    public class ConfigurationException : Exception
+    class ConfigurationException : Exception
     {
-        
+
     }
 }

@@ -8,11 +8,12 @@ namespace technologicalMayhem.SteamBot
     public abstract class CommandGroupBase : IChatCommand
     {
         public virtual ChatCommandProperties Properties { get; set; }
-        public Dictionary<string, Type> subCommands = new Dictionary<string, Type>();
+        public Dictionary<string, Type> SubCommands { get => subCommands; set => subCommands = value; }
+        private Dictionary<string, Type> subCommands = new Dictionary<string, Type>();
 
         public virtual void Execute(SteamID steamid, string[] parameters)
         {
-            if (subCommands.Count > 0)
+            if (SubCommands.Count > 0)
             {
                 if (parameters.Length < 1)
                 {
@@ -22,7 +23,7 @@ namespace technologicalMayhem.SteamBot
                 {
                     try
                     {
-                        var command = (IChatCommand)Activator.CreateInstance(subCommands[parameters[0]]);
+                        var command = (IChatCommand)Activator.CreateInstance(SubCommands[parameters[0]]);
                         CommandHandler.AddPreparedTask(steamid, parameters.Skip(1).ToArray(), command);
                     }
                     catch (KeyNotFoundException)

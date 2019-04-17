@@ -3,7 +3,7 @@ using SteamAuth;
 
 namespace technologicalMayhem.SteamBot
 {
-    public static class Globals
+    static class Globals
     {
         /// <summary>
         /// If this is set to false the application will start to shut down.
@@ -14,7 +14,7 @@ namespace technologicalMayhem.SteamBot
         /// <para>0 - Task Manager</para> 
         /// <para>1 - Chat Manager</para> 
         /// </summary>
-        public static bool[] ReadyForShutdown = new bool[]{false,false};
+        public static bool[] ReadyForShutdown = new bool[] { false, false };
         /// <summary>
         /// Username of the bot.
         /// </summary>

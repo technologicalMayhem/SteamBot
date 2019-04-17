@@ -1,6 +1,6 @@
 namespace technologicalMayhem.SteamBot
 {
-    public static class ChatMessages
+    static class ChatMessages
     {   
         //Normal Messages
         public const string WelcomeMsg = "Hallo, ich bin der unausstehliche Bot. Ich kann mithilfe von Chatbefehle ein paar simple Aufgaben übernehmen.\nDaher du jedoch neu bist hast du nur einen sehr begrenzten Zugriff. Für eine Liste aller Befehle gebe einfach 'help' ein.";

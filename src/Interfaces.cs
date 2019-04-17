@@ -11,6 +11,6 @@ namespace technologicalMayhem.SteamBot
 
     public interface ISubCommand
     {
-        
+
     }
 }

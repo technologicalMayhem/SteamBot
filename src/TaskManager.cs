@@ -3,7 +3,7 @@ using SteamAuth;
 
 namespace technologicalMayhem.SteamBot
 {
-    public static class TaskManager
+    static class TaskManager
     {
         public static void Start()
         {

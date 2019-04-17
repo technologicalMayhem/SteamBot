@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace technologicalMayhem.SteamBot
 {
-    public static class AddonManager
+    static class AddonManager
     {
         static AppDomain addons = AppDomain.CreateDomain("addons");
 

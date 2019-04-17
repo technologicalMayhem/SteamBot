@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Management.Automation;
 
-namespace technologicalMayhem.SteamBot
+namespace technologicalMayhem.SteamBot.Permissions
 {
     public class permCommand : CommandGroupBase
     {
@@ -17,9 +17,9 @@ namespace technologicalMayhem.SteamBot
                 CommandAlias = new string[] { "perm" },
                 CommandSyntax = "permissions <subcommand> [parameter]",
             };
-            subCommands.Add("get", typeof(GetPermissions));
-            subCommands.Add("add", typeof(AddPermissions));
-            subCommands.Add("remove", typeof(RemovePermissions));
+            SubCommands.Add("get", typeof(GetPermissions));
+            SubCommands.Add("add", typeof(AddPermissions));
+            SubCommands.Add("remove", typeof(RemovePermissions));
         }
 
         public class GetPermissions : IChatCommand

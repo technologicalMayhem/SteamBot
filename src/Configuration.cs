@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace technologicalMayhem.SteamBot
 {
-    public static class Configuration
+    static class Configuration
     {
         /// <summary>
         /// Loads and assigns all values from config.cfg
@@ -29,7 +29,8 @@ namespace technologicalMayhem.SteamBot
         /// </summary>
         public static void SaveConfig()
         {
-            var config = new ConfigFile(){
+            var config = new ConfigFile()
+            {
                 username = Globals.Username,
                 password = Globals.Password
             };

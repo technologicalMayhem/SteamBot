@@ -4,7 +4,7 @@ using SteamKit2;
 using Newtonsoft.Json;
 using technologicalMayhem.SteamBot;
 
-namespace technologicalMayhem.SteamBot
+namespace technologicalMayhem.SteamBot.Permissions
 {
     public static class Permissions
     {

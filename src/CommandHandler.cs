@@ -16,18 +16,20 @@ namespace technologicalMayhem.SteamBot
         public delegate void CommandReceivedHandler(ref OnCommandReceivedEventArgs e);
         public static event EventHandler<OnCommandExecutedEventArgs> CommandExecuted = delegate { };
 
-        public static List<CommandInfo> Commands;
+        private static List<CommandInfo> commands;
         private static Queue<Task> tasks;
         private static List<IChatCommand> ExecutingTasks;
         private static bool isShuttingDown;
         private static Thread thread;
+
+        public static CommandInfo[] Commands { get => commands.ToArray(); }
 
         public static void Start()
         {
             ExecutingTasks = new List<IChatCommand>();
             tasks = new Queue<Task>();
             thread = new Thread(() => Run());
-            Commands = new List<CommandInfo>();
+            commands = new List<CommandInfo>();
             //Load all availible Commands
             foreach (var c in AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(x => x.GetTypes())
@@ -36,9 +38,9 @@ namespace technologicalMayhem.SteamBot
                 var cmnd = (IChatCommand)Activator.CreateInstance(c);
                 var acti = new string[] { cmnd.Properties.Command };
                 acti.Concat(cmnd.Properties.CommandAlias);
-                Commands.Add(new CommandInfo() { type = c, activators = acti });
+                commands.Add(new CommandInfo() { type = c, activators = acti });
             }
-            Console.WriteLine($"Sucessfully loaded {Commands.Count} commands");
+            Console.WriteLine($"Sucessfully loaded {commands.Count} commands");
             thread.Start();
         }
 
@@ -197,14 +199,9 @@ namespace technologicalMayhem.SteamBot
 
         public void Execute(SteamID steamid, string[] parameters)
         {
-            var commands = new List<string>();
-            CommandHandler.Commands.ForEach(x =>
-            {
-                if (x.activators.First() != null & x.activators.First() != string.Empty)
-                {
-                    commands.Add(x.activators.First());
-                }
-            });
+            var commands = (from command in CommandHandler.Commands
+                            where (command.activators.First() != null && command.activators.First() != string.Empty)
+                            select command.activators.First()).ToList();
             //var help = ChatMessages.HelpBeginning + "\n" + commands.Aggregate((x,y) => x + "\n" + y) + ChatMessages.HelpEnding;
             //ChatManager.AddTask(steamid, help);
             var help = new string[] { ChatMessages.HelpBeginning, "/code " + commands.Aggregate((x, y) => x + "\n" + y), ChatMessages.HelpEnding };

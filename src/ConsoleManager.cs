@@ -2,7 +2,7 @@ using System;
 
 namespace technologicalMayhem.SteamBot
 {
-    public static class ConsoleManager
+    static class ConsoleManager
     {
         public static void Start()
         {
@@ -11,7 +11,7 @@ namespace technologicalMayhem.SteamBot
 
         public static void Stop()
         {
-            
+
         }
     }
 }

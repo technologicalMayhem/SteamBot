@@ -4,7 +4,7 @@ using technologicalMayhem.SteamBot;
 using SteamKit2;
 using System.Linq;
 
-namespace technologicalMayhem.SteamBot
+namespace technologicalMayhem.SteamBot.gmCommands
 {
     public class gmCommand : CommandGroupBase
     {
@@ -16,7 +16,7 @@ namespace technologicalMayhem.SteamBot
                 Command = "gmod",
                 CommandSyntax = "gmod <subcommand> [parameter]"
             };
-            subCommands.Add("addons", typeof(Addons));
+            SubCommands.Add("addons", typeof(Addons));
         }
 
         public class Addons : CommandGroupBase
@@ -28,7 +28,7 @@ namespace technologicalMayhem.SteamBot
                     CommandSyntax = "gmod addons <subcommand> [parameter]",
                     CommandDescription = "Stellt Befehle zu managen der Addons auf dem GMod Server bereit"
                 };
-                subCommands.Add("alert", typeof(Alert));
+                SubCommands.Add("alert", typeof(Alert));
             }
 
             public class Alert : IChatCommand

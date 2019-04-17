@@ -19,13 +19,13 @@ namespace technologicalMayhem.SteamBot
 
         class ChatTask
         {
-            public SteamID steamID{get;}
-            public string[] message {get;set;}
+            public SteamID steamID { get; }
+            public string[] message { get; set; }
 
             public ChatTask(SteamID steamID, string message)
             {
                 this.steamID = steamID;
-                this.message = new string[]{message};
+                this.message = new string[] { message };
             }
 
             public ChatTask(SteamID steamID, string[] message)
@@ -40,20 +40,20 @@ namespace technologicalMayhem.SteamBot
             Tasks = new Queue<ChatTask>();
             thread = new Thread(() => Run());
             steamClient = new SteamClient();
-            manager = new CallbackManager( steamClient );
+            manager = new CallbackManager(steamClient);
             steamUser = steamClient.GetHandler<SteamUser>();
             steamFriends = steamClient.GetHandler<SteamFriends>();
-            
+
 
             //Register all the Callbacks we are interested in
-            manager.Subscribe<SteamClient.ConnectedCallback>( OnConnected );
-            manager.Subscribe<SteamClient.DisconnectedCallback>( OnDisconnected );
-            manager.Subscribe<SteamUser.LoggedOnCallback>( OnLoggedOn );
-            manager.Subscribe<SteamUser.LoggedOffCallback>( OnLoggedOff );
-            manager.Subscribe<SteamUser.AccountInfoCallback> ( OnAccountInfo );
-            manager.Subscribe<SteamFriends.FriendAddedCallback> ( OnFriendAdded );
-            manager.Subscribe<SteamFriends.FriendMsgCallback> ( OnFriendMsg );
-            manager.Subscribe<SteamFriends.FriendsListCallback> ( OnFriendList );
+            manager.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
+            manager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
+            manager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
+            manager.Subscribe<SteamUser.LoggedOffCallback>(OnLoggedOff);
+            manager.Subscribe<SteamUser.AccountInfoCallback>(OnAccountInfo);
+            manager.Subscribe<SteamFriends.FriendAddedCallback>(OnFriendAdded);
+            manager.Subscribe<SteamFriends.FriendMsgCallback>(OnFriendMsg);
+            manager.Subscribe<SteamFriends.FriendsListCallback>(OnFriendList);
 
             steamClient.Connect();
             thread.Start();
@@ -61,13 +61,15 @@ namespace technologicalMayhem.SteamBot
 
         static void Run()
         {
-            Thread receive = new Thread(() => {
+            Thread receive = new Thread(() =>
+            {
                 while (!isShuttingDown)
                 {
-                    manager.RunWaitCallbacks( TimeSpan.FromSeconds( 1 ) );
+                    manager.RunWaitCallbacks(TimeSpan.FromSeconds(1));
                 }
             });
-            Thread send = new Thread(() => {
+            Thread send = new Thread(() =>
+            {
                 while (!isShuttingDown)
                 {
                     if (Tasks.Count > 0)
@@ -90,9 +92,9 @@ namespace technologicalMayhem.SteamBot
             send.Start();
             while (receive.IsAlive || send.IsAlive)
             {
-                
+
             }
-        } 
+        }
 
         public static void Stop()
         {
@@ -113,19 +115,19 @@ namespace technologicalMayhem.SteamBot
         {
             foreach (var friend in callback.FriendList)
             {
-                if (friend.Relationship == EFriendRelationship.RequestRecipient )
+                if (friend.Relationship == EFriendRelationship.RequestRecipient)
                 {
                     steamFriends.AddFriend(friend.SteamID);
                 }
             }
         }
 
-         static void OnAccountInfo( SteamUser.AccountInfoCallback callback )
+        static void OnAccountInfo(SteamUser.AccountInfoCallback callback)
         {
             // before being able to interact with friends, you must wait for the account info callback
             // this callback is posted shortly after a successful logon
             // at this point, we can go online on friends, so lets do that
-            steamFriends.SetPersonaState( EPersonaState.Online );
+            steamFriends.SetPersonaState(EPersonaState.Online);
         }
 
         static void OnFriendMsg(SteamFriends.FriendMsgCallback callback)
@@ -144,32 +146,32 @@ namespace technologicalMayhem.SteamBot
             }
         }
 
-        static void OnConnected( SteamClient.ConnectedCallback callback )
+        static void OnConnected(SteamClient.ConnectedCallback callback)
         {
             Console.WriteLine($"Logging in as {Globals.Username}...");
-            steamUser.LogOn( new SteamUser.LogOnDetails
+            steamUser.LogOn(new SteamUser.LogOnDetails
             {
                 Username = Globals.Username,
                 Password = Globals.Password,
-            } );
+            });
         }
 
-        static void OnDisconnected( SteamClient.DisconnectedCallback callback )
+        static void OnDisconnected(SteamClient.DisconnectedCallback callback)
         {
             Globals.ReadyForShutdown[1] = true;
         }
 
-        static void OnLoggedOn( SteamUser.LoggedOnCallback callback )
+        static void OnLoggedOn(SteamUser.LoggedOnCallback callback)
         {
-            if ( callback.Result != EResult.OK )
+            if (callback.Result != EResult.OK)
             {
-                if ( callback.Result == EResult.AccountLogonDenied )
+                if (callback.Result == EResult.AccountLogonDenied)
                 {
-                    Console.WriteLine( "Unable to logon to Steam: This account is SteamGuard protected." );
+                    Console.WriteLine("Unable to logon to Steam: This account is SteamGuard protected.");
                     return;
                 }
 
-                Console.WriteLine( "Unable to logon to Steam: {0} / {1}", callback.Result, callback.ExtendedResult );
+                Console.WriteLine("Unable to logon to Steam: {0} / {1}", callback.Result, callback.ExtendedResult);
                 return;
             }
             else
@@ -178,7 +180,7 @@ namespace technologicalMayhem.SteamBot
             }
         }
 
-        static void OnLoggedOff( SteamUser.LoggedOffCallback callback )
+        static void OnLoggedOff(SteamUser.LoggedOffCallback callback)
         {
         }
     }

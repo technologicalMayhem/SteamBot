@@ -39,11 +39,6 @@ namespace technologicalMayhem.SteamBot
                 Commands.Add(new CommandInfo() { type = c, activators = acti });
             }
             Console.WriteLine($"Sucessfully loaded {Commands.Count} commands");
-            //Prints Table of Commands; should only be used for verbose logging
-            /* var table = new ConsoleTables.ConsoleTable("Source", "Class Name", "Command");
-            Commands.ForEach(x => table.AddRow(Path.GetFileName(x.GetType().Assembly.Location), x.GetType().Name, String.Join(',', x.activators)));
-            Console.WriteLine("Loaded Commands:");
-            table.Write(ConsoleTables.Format.MarkDown); */
             thread.Start();
         }
 

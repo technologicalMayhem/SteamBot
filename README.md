@@ -1,5 +1,6 @@
-[![Build Status](https://travis-ci.com/technologicalMayhem/SteamBot.svg?branch=master)](https://travis-ci.com/technologicalMayhem/SteamBot)
 # SteamBot
+
+[![Build Status](https://travis-ci.com/technologicalMayhem/SteamBot.svg?branch=master)](https://travis-ci.com/technologicalMayhem/SteamBot)
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a32d4a01fd834b19948164b46f56ca47)](https://app.codacy.com/app/technologicalMayhem/SteamBot?utm_source=github.com&utm_medium=referral&utm_content=technologicalMayhem/SteamBot&utm_campaign=Badge_Grade_Settings)
 

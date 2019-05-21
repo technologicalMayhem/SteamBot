@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/technologicalMayhem/SteamBot.svg?branch=master)](https://travis-ci.com/technologicalMayhem/SteamBot)
 # SteamBot
 A configurable SteamBot.
 
